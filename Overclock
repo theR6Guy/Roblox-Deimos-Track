@@ -1,0 +1,45 @@
+-- Custom Image ESP for Roblox (Delta/Synapse LocalScript)
+-- Paste this into your executor and run in-game.
+
+local IMAGE_ID = "rbxassetid://131397269987320"  -- Replace with your asset ID
+
+-- Function to attach ESP marker to a player's head
+local function attachESP(player)
+    if player == game.Players.LocalPlayer then return end
+
+    local function onCharacter(char)
+        local head = char:WaitForChild("Head", 5)
+        if not head or head:FindFirstChild("ESPMarker") then return end
+
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "ESPMarker"
+        billboard.Adornee = head
+        billboard.AlwaysOnTop = true
+        billboard.LightInfluence = 0
+        billboard.Size = UDim2.new(2, 0, 2, 0)
+        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+
+        local imageLbl = Instance.new("ImageLabel")
+        imageLbl.Name = "ESPImage"
+        imageLbl.BackgroundTransparency = 1
+        imageLbl.Size = UDim2.new(1, 0, 1, 0)
+        imageLbl.Image = IMAGE_ID
+        imageLbl.Parent = billboard
+
+        billboard.Parent = head
+    end
+
+    -- Attach ESP when character exists or spawns
+    if player.Character then
+        onCharacter(player.Character)
+    end
+    player.CharacterAdded:Connect(onCharacter)
+end
+
+-- Attach ESP to existing players
+for _, plr in ipairs(game.Players:GetPlayers()) do
+    attachESP(plr)
+end
+
+-- Attach ESP to new players
+game.Players.PlayerAdded:Connect(attachESP)
